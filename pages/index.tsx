@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useEffect } from 'react'
 import {
   Box, Button, chakra,
   Container, HStack, Icon, Image, Link, Skeleton, Stack, Text,
@@ -6,42 +6,81 @@ import {
 } from '@chakra-ui/react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { GoChevronRight } from 'react-icons/go'
+import { MdBolt } from 'react-icons/md'
+import { BeatLoader } from 'react-spinners'
 import {
   useAccount,
   useContractRead,
   useContractWrite,
-  usePrepareContractWrite
+  usePrepareContractWrite,
+  useWaitForTransaction
 } from 'wagmi'
-import { UseContractConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContract'
 import contractInterface from '../contract-abi.json'
+import Confetti from 'react-confetti'
+import FlipCard, { BackCard, FrontCard } from '../components/FlipCard'
 
-const contractConfig: UseContractConfig = {
-  addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
-  contractInterface: contractInterface,
-}
+
+
+// const contractConfig: UseContractConfig = {
+//   addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
+//   contractInterface: contractInterface,
+// }
 
 const HeroSection = () => {
-  const {isConnected} = useAccount()
-  const { address } = useAccount();
-  const [totalMinted, setTotalMinted] = React.useState(0);
+
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+  const [totalMinted, setTotalMinted] = React.useState(0)
+  const { isConnected } = useAccount()
+  const { address } = useAccount()
 
 
-  const { data: tokenURI } = useContractRead({
-    ...contractConfig,
-    functionName: 'commonTokenURI',
-  })
+
+
   const { data: mintCost } = useContractRead({
-    ...contractConfig,
+    addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
+    contractInterface: contractInterface,
     functionName: 'mintCost',
-  });
+  })
+
   const { config } = usePrepareContractWrite({
-    ...contractConfig,
+    addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
+    contractInterface: contractInterface,
     functionName: 'mint',
     args: [address, { value: mintCost?.toString() }],
+  })
+
+  const {
+    data: mintData,
+    write: mint,
+    isLoading: isMintLoading,
+    isSuccess: isMintStarted,
+    error: mintError,
+  } = useContractWrite(config)
+
+
+
+  const { data: totalSupplyData } = useContractRead({
+    ...config,
+    functionName: 'totalSupply',
+    watch: true,
+  })
+
+  React.useEffect(() => {
+    if (totalSupplyData) {
+      setTotalMinted(totalSupplyData.toNumber())
+    }
+  }, [totalSupplyData])
+
+  const {
+    data: txData,
+    isSuccess: txSuccess,
+    error: txError,
+  } = useWaitForTransaction({
+    hash: mintData?.hash,
   });
 
-
-  const {write: mint, isSuccess} = useContractWrite(config)
+  const isMinted = txSuccess
 
   return (
     <Container maxW="6xl" px={{ base: 6, md: 3 }} py={24}>
@@ -73,8 +112,8 @@ const HeroSection = () => {
             </HStack>
           </HStack>
           <chakra.h1 fontSize="5xl" lineHeight={1} fontWeight="bold" textAlign="left">
-            Build products faster <br />
-            <chakra.span color="teal">in ChakraUI</chakra.span>
+            Crypto Chihuahuas &#8212;<br />
+            <chakra.span color="teal">a generative art NFT</chakra.span>
           </chakra.h1>
           <Text
             fontSize="1.2rem"
@@ -83,7 +122,6 @@ const HeroSection = () => {
             fontWeight="400"
             color="gray.500"
           >
-            {totalMinted} minted so far!
 
           </Text>
           <HStack
@@ -110,12 +148,27 @@ const HeroSection = () => {
               <Icon as={MdBolt} h={4} w={4} ml={1} />
             </chakra.button>
             )} */}
-            <Button onClick={() => mint?.()}>Mint</Button>
+
+            {mounted && isConnected && !isMinted && (
+              <button
+                style={{ marginTop: 24 }}
+                disabled={!mint || isMintLoading || isMintStarted}
+                className="button"
+                data-mint-loading={isMintLoading}
+                data-mint-started={isMintStarted}
+                onClick={() => mint?.()}
+              >
+                {isMintLoading && 'Waiting for approval'}
+                {isMintStarted && 'Minting...'}
+                {!isMintLoading && !isMintStarted && 'Mint'}
+                {isMinted && <Confetti />}
+              </button>
+            )}
           </HStack>
         </Stack>
         <Box ml={{ base: 0, md: 5 }} pos="relative">
           <DottedBox />
-          <Image
+          {/* <Image
             w="100%"
             h="100%"
             minW={{ base: 'auto', md: '30rem' }}
@@ -123,7 +176,48 @@ const HeroSection = () => {
             src={`hero.gif`}
             rounded="md"
             fallback={<Skeleton />}
-          />
+          /> */}
+          <FlipCard>
+            <FrontCard isCardFlipped={isMinted}>
+              <Image
+                layout="responsive"
+                src="hero.gif"
+                width="100%"
+                height="100%"
+                alt="RainbowKit Demo NFT"
+              />
+            </FrontCard>
+           
+            <BackCard isCardFlipped={isMinted}>
+              <div style={{ padding: 24 }}>
+                <Image
+                  src="/nft.png"
+                  width="100%"
+                  height="100%"
+                  alt="RainbowKit Demo NFT"
+                  style={{ borderRadius: 8 }}
+                />
+                <h2 style={{ marginTop: 24, marginBottom: 6 }}>NFT Minted!</h2>
+                <p style={{ marginBottom: 24 }}>
+                  Your NFT will show up in your wallet in the next few minutes.
+                </p>
+                <p style={{ marginBottom: 6 }}>
+                  View on{' '}
+                  <a href={`https://rinkeby.etherscan.io/tx/${mintData?.hash}`}>
+                    Etherscan
+                  </a>
+                </p>
+                <p>
+                  View on{' '}
+                  <a
+                    href={`https://testnets.opensea.io/assets/rinkeby/${txData?.to}/1`}
+                  >
+                    Opensea
+                  </a>
+                </p>
+              </div>
+            </BackCard>
+          </FlipCard>
         </Box>
       </Stack>
     </Container>

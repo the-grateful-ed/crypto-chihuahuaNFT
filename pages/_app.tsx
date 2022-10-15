@@ -4,13 +4,14 @@ import {
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { argentWallet, trustWallet } from '@rainbow-me/rainbowkit/wallets'
-import { theme } from '../components/theme/index'
 import type { AppProps } from 'next/app'
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
-import '../styles/global.css'
+import Footer from '../components/Footer'
 import TopNav from '../components/NavBar'
+import { theme } from '../components/theme/index'
+import '../styles/global.css'
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
@@ -52,10 +53,11 @@ const wagmiClient = createClient({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme} resetCSS={true}>
-      <TopNav />
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider appInfo={demoAppInfo} chains={chains}>
+          <TopNav />
           <Component {...pageProps} />
+          <Footer />
         </RainbowKitProvider>
       </WagmiConfig>
     </ChakraProvider>

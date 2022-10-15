@@ -18,6 +18,7 @@ import { GoChevronLeft, GoChevronRight } from 'react-icons/go'
 import { FaGithub } from 'react-icons/fa'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { AiOutlineClose } from 'react-icons/ai'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 const GITHUB_REPO_LINK = 'https://github.com/MA-Ahmad/templateskart'
 
@@ -79,7 +80,7 @@ export default function TopNav() {
                                         />
                                         <HStack display={{ base: 'none', sm: 'flex' }} spacing={2}>
                                             <Text textShadow="1px 2px #179c40">
-                                                T{' '}
+                                                Crypto{' '}
                                                 <Box
                                                     as="span"
                                                     position="relative"
@@ -100,7 +101,7 @@ export default function TopNav() {
                                                         color={useColorModeValue('white', 'black')}
                                                         position="relative"
                                                     >
-                                                        Kart
+                                                        Chihuahuas NFT
                                                     </Box>
                                                 </Box>
                                             </Text>
@@ -120,19 +121,7 @@ export default function TopNav() {
                             <DropDownMenu menuData={menuData} />
                         </HStack>
                         <HStack spacing={2} alignItems="center">
-                            <Link href={GITHUB_REPO_LINK} isExternal>
-                                <Flex
-                                    as="button"
-                                    p="0.6rem"
-                                    rounded="lg"
-                                    cursor="pointer"
-                                    _hover={{ bg: useColorModeValue('gray.300', 'gray.600') }}
-                                    bg={useColorModeValue('gray.200', 'gray.700')}
-                                    justify="center"
-                                >
-                                    <Icon as={FaGithub} color={linkColor} />
-                                </Flex>
-                            </Link>
+                            <ConnectButton />
                         </HStack>
                     </Flex>
                 </Container>

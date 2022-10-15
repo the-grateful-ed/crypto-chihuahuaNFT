@@ -1,30 +1,19 @@
-import * as React from 'react'
+import React, {useState, useEffect} from 'react'
 import {
-  chakra,
-  Container,
-  Stack,
-  HStack,
-  Text,
-  useColorModeValue,
-  Button,
-  Image,
-  Skeleton,
-  Box,
-  Link,
-  Icon
+  Box, Button, chakra,
+  Container, HStack, Icon, Image, Link, Skeleton, Stack, Text,
+  useColorModeValue
 } from '@chakra-ui/react'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { GoChevronRight } from 'react-icons/go'
 import {
   useAccount,
   useContractRead,
   useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
+  usePrepareContractWrite
 } from 'wagmi'
-import { GoChevronRight } from 'react-icons/go'
-import { MdBolt } from 'react-icons/md'
-import contractInterface from '../contract-abi.json'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { UseContractConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContract'
+import contractInterface from '../contract-abi.json'
 
 const contractConfig: UseContractConfig = {
   addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
@@ -34,6 +23,9 @@ const contractConfig: UseContractConfig = {
 const HeroSection = () => {
   const {isConnected} = useAccount()
   const { address } = useAccount();
+  const [totalMinted, setTotalMinted] = React.useState(0);
+
+
   const { data: tokenURI } = useContractRead({
     ...contractConfig,
     functionName: 'commonTokenURI',
@@ -47,7 +39,7 @@ const HeroSection = () => {
     functionName: 'mint',
     args: [address, { value: mintCost?.toString() }],
   });
-  
+
 
   const {write: mint, isSuccess} = useContractWrite(config)
 
@@ -55,6 +47,8 @@ const HeroSection = () => {
     <Container maxW="6xl" px={{ base: 6, md: 3 }} py={24}>
       <Stack direction={{ base: 'column', md: 'row' }} justifyContent="center">
         <Stack direction="column" spacing={6} justifyContent="center" maxW="480px">
+          <ConnectButton />
+
           <HStack
             as={Link}
             p={1}
@@ -63,7 +57,6 @@ const HeroSection = () => {
             w="max-content"
             bg={useColorModeValue('gray.300', 'gray.700')}
           >
-            <ConnectButton />
             <Box
               py={1}
               px={2}
@@ -90,8 +83,8 @@ const HeroSection = () => {
             fontWeight="400"
             color="gray.500"
           >
-            TemplatesKart provides the best ChakraUI templates. Focus on your business, not on the
-            boilerplate.
+            {totalMinted} minted so far!
+
           </Text>
           <HStack
             spacing={{ base: 0, sm: 2 }}

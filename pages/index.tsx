@@ -100,7 +100,7 @@ const HeroSection = () => {
               color="white"
               bgGradient="linear(to-l, #0ea5e9,#2563eb)"
             >
-              What's new
+              Whats new
             </Box>
             <HStack spacing={1} alignItems="center" justifyContent="center">
               <Text lineHeight={1}>See our recent updates</Text>

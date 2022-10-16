@@ -4,8 +4,8 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import React from 'react'
-import Confetti from 'react-confetti'
 import { GoChevronRight } from 'react-icons/go'
+import { BeatLoader } from 'react-spinners'
 import {
   useAccount,
   useContractRead,
@@ -15,13 +15,8 @@ import {
 } from 'wagmi'
 import FlipCard, { BackCard, FrontCard } from '../components/FlipCard'
 import contractInterface from '../contract-abi.json'
-import {BeatLoader} from 'react-spinners'
 
 
-// const contractConfig: UseContractConfig = {
-//   addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
-//   contractInterface: contractInterface,
-// }
 
 const HeroSection = () => {
 
@@ -120,26 +115,6 @@ const HeroSection = () => {
           >
 
           </Text>
-          
-            {/* {isConnected && ( 
-            <chakra.button
-              w={{ base: '100%', sm: 'auto' }}
-              h={12}
-              px={6}
-              color="white"
-              size="lg"
-              rounded="md"
-              mb={{ base: 2, sm: 0 }}
-              zIndex={5}
-              lineHeight={1}
-              bgGradient="linear(to-l, #0ea5e9,#2563eb)"
-              _hover={{ bgGradient: 'linear(to-l, #0ea5e9,#2563eb)', opacity: 0.9 }}
-              onClick={() => mint?.()}
-            >
-              <chakra.span> Explore ComponentsKart </chakra.span>
-              <Icon as={MdBolt} h={4} w={4} ml={1} />
-            </chakra.button>
-            )} */}
 
             {mounted && isConnected && !isMinted && (
               <Button

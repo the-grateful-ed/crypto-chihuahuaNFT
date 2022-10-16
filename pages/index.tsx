@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react'
 import {
   Box, Button, chakra,
-  Container, HStack, Icon, Image, Link, Skeleton, Stack, Text,
+  Container, HStack, Icon, Image, Link, Stack, Text,
   useColorModeValue
 } from '@chakra-ui/react'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import React from 'react'
+import Confetti from 'react-confetti'
 import { GoChevronRight } from 'react-icons/go'
-import { MdBolt } from 'react-icons/md'
-import { BeatLoader } from 'react-spinners'
 import {
   useAccount,
   useContractRead,
@@ -15,10 +13,9 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction
 } from 'wagmi'
-import contractInterface from '../contract-abi.json'
-import Confetti from 'react-confetti'
 import FlipCard, { BackCard, FrontCard } from '../components/FlipCard'
-
+import contractInterface from '../contract-abi.json'
+import {BeatLoader} from 'react-spinners'
 
 
 // const contractConfig: UseContractConfig = {
@@ -38,13 +35,13 @@ const HeroSection = () => {
 
 
   const { data: mintCost } = useContractRead({
-    addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
+    addressOrName: '0x3E7df40D3C6B6f464DEf35024d3dF1d0d71Ffd51',
     contractInterface: contractInterface,
     functionName: 'mintCost',
   })
 
   const { config } = usePrepareContractWrite({
-    addressOrName: '0xfabe8c2F8e11f25e0fCAD2f75475708c3dbFff2e',
+    addressOrName: '0x3E7df40D3C6B6f464DEf35024d3dF1d0d71Ffd51',
     contractInterface: contractInterface,
     functionName: 'mint',
     args: [address, { value: mintCost?.toString() }],
@@ -86,7 +83,6 @@ const HeroSection = () => {
     <Container maxW="6xl" px={{ base: 6, md: 3 }} py={24}>
       <Stack direction={{ base: 'column', md: 'row' }} justifyContent="center">
         <Stack direction="column" spacing={6} justifyContent="center" maxW="480px">
-          <ConnectButton />
 
           <HStack
             as={Link}
@@ -112,8 +108,8 @@ const HeroSection = () => {
             </HStack>
           </HStack>
           <chakra.h1 fontSize="5xl" lineHeight={1} fontWeight="bold" textAlign="left">
-            Crypto Chihuahuas &#8212;<br />
-            <chakra.span color="teal">a generative art NFT</chakra.span>
+            Crypto Chihuahuas<br />
+            <chakra.span color="teal"> &#8212; a generative art NFT</chakra.span>
           </chakra.h1>
           <Text
             fontSize="1.2rem"
@@ -124,11 +120,7 @@ const HeroSection = () => {
           >
 
           </Text>
-          <HStack
-            spacing={{ base: 0, sm: 2 }}
-            mb={{ base: '3rem !important', sm: 0 }}
-            flexWrap="wrap"
-          >
+          
             {/* {isConnected && ( 
             <chakra.button
               w={{ base: '100%', sm: 'auto' }}
@@ -150,7 +142,7 @@ const HeroSection = () => {
             )} */}
 
             {mounted && isConnected && !isMinted && (
-              <button
+              <Button
                 style={{ marginTop: 24 }}
                 disabled={!mint || isMintLoading || isMintStarted}
                 className="button"
@@ -158,13 +150,32 @@ const HeroSection = () => {
                 data-mint-started={isMintStarted}
                 onClick={() => mint?.()}
               >
-                {isMintLoading && 'Waiting for approval'}
-                {isMintStarted && 'Minting...'}
-                {!isMintLoading && !isMintStarted && 'Mint'}
-                {isMinted && <Confetti />}
-              </button>
+              {isMintLoading && <Button
+                w="100%"
+                isLoading
+                colorScheme='red'
+                spinner={<BeatLoader size={8} color='white' />}
+              >
+                Click me
+              </Button>}
+              {isMintStarted && <Button
+                w="100%"
+                isLoading
+                loadingText='Minting'
+                colorScheme='green'
+                variant='solid'
+              >
+                Submit
+              </Button>}
+              {!isMintLoading && !isMintStarted && <Button
+                w="100%"
+                size="lg" colorScheme='blue'
+                rounded="md" onClick={() => mint?.()}>
+                Mint
+              </Button>}
+              </Button>
             )}
-          </HStack>
+       
         </Stack>
         <Box ml={{ base: 0, md: 5 }} pos="relative">
           <DottedBox />
